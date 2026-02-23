@@ -1,50 +1,33 @@
-#include "PathAlgorithm.h"
-#include "QtConcurrent/qtconcurrentrun.h"
-#include <iostream>
-#include <queue>
-#include <map>
-#include <unistd.h>
-#include <chrono>
-#include <thread>
+#ifndef PATHALGORITHM_H
+#define PATHALGORITHM_H
+#include <QObject>
+#include <QDebug>
+
 #include <QtConcurrent>
 #include <QFuture>
-#include <stack>
-#include <list>
-#include <QDebug> // Include for qDebug()
-#include <QDateTime> // Include for QDateTime::currentMSecsSinceEpoch()
-#include <QThread> // Include for QThread::currentThreadId()
+#include "GridView.h"
+#include <queue> // for std::priority_queue
+#include <cmath> // For fabsf
 
-//Constructor
-PathAlgorithm::PathAlgorithm(QObject* parent): QObject (parent)
-{
-    // The algorithm is not running at startup
-    running = false;
-    simulationOnGoing = false;
-    endReached = false;
+// For Dijkstra: orders by localGoal (min-heap)
+struct CompareNodesDijkstra {
+    bool operator()(Node* a, Node* b) {
+        // For a min-heap, return true if 'a' has lower priority than 'b' (i.e., a's goal is greater than b's)
+        return a->localGoal > b->localGoal;
+    }
+};
 
-    speedVisualization = 250;
-    qDebug() << "PathAlgorithm: Constructor called. Main thread ID:" << QThread::currentThreadId();
-}
+// For AStar: orders by globalGoal (min-heap)
+struct CompareNodesAStar {
+    bool operator()(Node* a, Node* b) {
+        // For a min-heap, return true if 'a' has lower priority than 'b' (i.e., a's goal is greater than b's)
+        return a->globalGoal > b->globalGoal;
+    }
+};
 
-//Destructor
-PathAlgorithm::~PathAlgorithm()
-{
-
-}
-
-//Getters/Setters: current Algorithm from gridView
-ALGOS PathAlgorithm::getCurrentAlgorithm() const
-{
-    return currentAlgorithm;
-}
-
-//Getters/Setters: current Algorithm from gridView
-void PathAlgorithm::setCurrentAlgorithm(ALGOS algorithm)
-{
-    this->currentAlgorithm = algorithm;
-}
-
-void PathAlgorithm::setSpeedVizualization(int speed)
-{
-    this->speedVisualization = speed;
-}
+//Build walls list between adjacent odd-indexed cells
+struct Wall {
+    int wallIndex;
+    int cell1Index;
+    int cell2Index;
+};
