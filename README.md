@@ -119,10 +119,10 @@ The program will display:
 
 ## Course Information
 
-- **Course Code**: COMP 201
+- **Course Code**: COMP 202
 - **Semester**: 3rd Semester
 - **Project Type**: Mini Project
-- **Institution**: [Your Institution Name]
+- **Institution**: Kathmandu University
 
 ## Notes
 
