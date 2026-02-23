@@ -109,3 +109,22 @@ private:
     Ui::MainWindow* ui;
     GridView gridView;
     PathAlgorithm pathAlgorithm;
+    QTimer* animationTimer;
+    QElapsedTimer elapsedTimer;
+    QLabel* timeDisplayLabel;
+
+    qint64 pausedTimeOffset;
+    QList<AlgorithmComparisonData> comparisonDataList;
+
+    // Function to export features to CSV
+    void exportFeaturesToCSV(const AlgorithmComparisonData& dataToExport);
+
+    // Function to update the QTableWidget with all current data
+    void updateComparisonTable();
+
+    QPushButton* playYourselfButton; // Declare the new button
+    PlayerMazeWindow* playerMazeWindow; // Pointer to the player maze window
+
+    bool mazeCurrentlyGenerated; //Flag to track if a maze is generated
+};
+#endif // MAINWINDOW_H
