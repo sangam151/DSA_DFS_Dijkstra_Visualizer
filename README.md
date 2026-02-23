@@ -64,6 +64,11 @@ This is a 3rd semester mini project for **COMP 201** that demonstrates the pract
 5. Backtrack when no unvisited neighbors exist
 6. Continue until all cells are visited
 
+
+![maze](https://github.com/user-attachments/assets/06af36e4-9264-4a28-89c4-571b4940540a)
+
+
+
 ### Shortest Path (Dijkstra's)
 
 1. Initialize distances to all cells as infinity (except start = 0)
@@ -71,6 +76,8 @@ This is a 3rd semester mini project for **COMP 201** that demonstrates the pract
 3. Update distances of neighboring cells
 4. Continue until destination is reached or all reachable cells are processed
 5. Reconstruct path by backtracking from destination to start
+
+![path](https://github.com/user-attachments/assets/3d83b95a-f17b-4082-a08e-04d4d43aaebe)
 
 ## Sample Output
 
