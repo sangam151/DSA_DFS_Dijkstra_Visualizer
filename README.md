@@ -65,7 +65,8 @@ This is a 3rd semester mini project for **COMP 201** that demonstrates the pract
 6. Continue until all cells are visited
 
 
-![path](https://github.com/user-attachments/assets/3d83b95a-f17b-4082-a08e-04d4d43aaebe)
+![maze](https://github.com/user-attachments/assets/06af36e4-9264-4a28-89c4-571b4940540a)
+
 
 
 ### Shortest Path (Dijkstra's)
@@ -76,7 +77,7 @@ This is a 3rd semester mini project for **COMP 201** that demonstrates the pract
 4. Continue until destination is reached or all reachable cells are processed
 5. Reconstruct path by backtracking from destination to start
 
-![alt text](path.jpeg)
+![path](https://github.com/user-attachments/assets/3d83b95a-f17b-4082-a08e-04d4d43aaebe)
 
 ## Sample Output
 
