@@ -1,0 +1,36 @@
+# Qt Creator/Build outputs
+build-*/
+*-build/
+
+# Qt generated C++ files
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+Makefile*
+*.pro.user
+*.pro.user.*
+
+
+# Object files
+*.o
+*.obj
+
+# Executables and Libraries
+*.exe
+*.app
+*.so
+*.dylib
+*.dll
+*.lib
+*.a
+
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*~
+
+# System specific
+.DS_Store
+Thumbs.db
