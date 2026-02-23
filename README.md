@@ -64,7 +64,8 @@ This is a 3rd semester mini project for **COMP 201** that demonstrates the pract
 5. Backtrack when no unvisited neighbors exist
 6. Continue until all cells are visited
 
-![alt text](../../Downloads/maze.jpeg)
+
+![path](https://github.com/user-attachments/assets/3d83b95a-f17b-4082-a08e-04d4d43aaebe)
 
 
 ### Shortest Path (Dijkstra's)
@@ -76,6 +77,7 @@ This is a 3rd semester mini project for **COMP 201** that demonstrates the pract
 5. Reconstruct path by backtracking from destination to start
 
 ![alt text](path.jpeg)
+
 ## Sample Output
 
 The program will display:
