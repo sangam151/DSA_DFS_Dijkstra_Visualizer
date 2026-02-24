@@ -210,4 +210,76 @@ void PathAlgorithm::performDijkstraAlgorithm(QPromise<int>& promise)
         node.parent         = nullptr;
         node.visited        = false; // Reset visited flag
     }
+
+
+
+
+     auto distance = [](Node* a, Node* b)
+    {
+        return sqrtf(   (a->xCoord - b->xCoord) * (a->xCoord - b->xCoord)
+                     +(a->yCoord - b->yCoord) * (a->yCoord - b->yCoord));
+    };
+
+    Node* nodeStart = &(gridNodes.Nodes[gridNodes.startIndex]);
+    Node* nodeEnd = &(gridNodes.Nodes[gridNodes.endIndex]);
+
+    nodeStart->localGoal = 0.0f;
+
+    // Use std::priority_queue for Dijkstra
+    std::priority_queue<Node*, std::vector<Node*>, CompareNodesDijkstra> nodesToTest;
+    nodesToTest.push(nodeStart);
+
+    int nodesVisitedCount = 0; // Counter for visited nodes
+
+    while(!nodesToTest.empty())
+    {
+        promise.suspendIfRequested();
+        if (promise.isCanceled()) {
+            qDebug() << "Dijkstra: Algorithm cancelled during loop.";
+            emit pathfindingSearchCompleted(nodesVisitedCount, 0);
+            return;
+        }
+
+        Node* nodeCurrent = nodesToTest.top();
+        nodesToTest.pop();
+
+        // If this node has already been visited (meaning we found a shorter path to it earlier), skip it.
+        if (nodeCurrent->visited) {
+            continue;
+        }
+
+        nodeCurrent->visited = true; // Mark as visited after extracting from PQ
+        nodesVisitedCount++; // Increment when a node is processed (removed from open list)
+
+        int indexCurrent = coordToIndex(nodeCurrent->xCoord, nodeCurrent->yCoord, widthGrid);
+        if (indexCurrent != gridNodes.startIndex && indexCurrent != gridNodes.endIndex) {
+            emit updatedScatterGridView(VISIT, indexCurrent);
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(speedVisualization));
+
+        if (nodeCurrent == nodeEnd) { // Goal reached
+            break;
+        }
+
+        for (Node* nodeNeighbour: nodeCurrent->neighbours)
+        {
+            if(!nodeNeighbour->obstacle) // Only consider non-obstacle neighbors
+            {
+                float potentialLowerGoal = nodeCurrent->localGoal + distance(nodeCurrent, nodeNeighbour);
+                if (potentialLowerGoal < nodeNeighbour->localGoal){
+                    nodeNeighbour->parent = nodeCurrent;
+                    nodeNeighbour->localGoal = potentialLowerGoal;
+
+                    // Always push to PQ if a better path is found, even if potentially "visited" by a longer path
+                    nodesToTest.push(nodeNeighbour);
+
+                    // Only emit NEXT if it's not the end node and it hasn't been visited in a finalized path yet
+                    if (!nodeNeighbour->visited && nodeNeighbour != nodeEnd) {
+                        emit updatedScatterGridView(NEXT, coordToIndex(nodeNeighbour->xCoord, nodeNeighbour->yCoord, widthGrid));
+                    }
+                }
+            }
+        }
+    }
 }
