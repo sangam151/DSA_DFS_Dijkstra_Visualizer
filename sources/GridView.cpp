@@ -591,3 +591,112 @@ int coordToIndex(const QPointF& point, int widthGrid)
 {
     return (point.y() - 1) * widthGrid + point.x() - 1;
 }
+void GridView::AlgorithmView(bool on)
+{
+    if (on){
+        nextElements    ->setPointsVisible(true);
+        pathElements    ->setPointsVisible(true);
+        visitedElements ->setPointsVisible(true);
+
+
+    }else{
+        //        nextElements    ->setPointsVisible(false);
+        //        visitedElements ->setPointsVisible(false);
+        //        pathElements    ->setPointsVisible(false);
+
+    }
+
+}
+
+
+// Updating the view (for the path planning algorithms)
+bool GridView::handleUpdatedScatterGridView(UPDATETYPES updateType, int updateIndex)
+{
+
+    switch (updateType) {
+    case VISIT:
+        replaceNextbyVisited(updateIndex);  break;
+    case NEXT:
+        replaceFreebyNext(updateIndex);     break;
+    case PATH:
+        replaceVisitedbyPath(updateIndex);  break;
+    case FREE:
+        replaceNextbyFree(updateIndex);     break;
+    case FREETOOBSTACLE:
+        replaceFreebyObstacle(updateIndex); break;
+    case OBSTACLETOFREE:
+        replaceObstaclebyFree(updateIndex); break;
+    default:
+        break;
+    }
+    return true;
+}
+bool GridView::handleUpdatedLineGridView(QPointF updatePoint, bool addingPoint, bool clearPriorToUpdate)
+{
+    if (clearPriorToUpdate){
+        pathLine->clear();
+    }
+    updateLine(updatePoint, addingPoint);
+
+    return true;
+}
+
+// Replacing functions
+
+void GridView::replaceFreebyVisited(int updateIndex)
+{
+    // Current node is free
+    QList<QPointF> freeElementsPoints = freeElements->points();
+    QPointF visitedPoint = freeElementsPoints[updateIndex];
+
+    if (visitedPoint !=QPointF())
+    {
+        freeElements->replace(updateIndex, QPointF());
+        visitedElements->replace(updateIndex, visitedPoint);
+    }
+}
+
+void GridView::replaceFreebyObstacle(int updateIndex)
+{
+    // Current node is free
+    QList<QPointF> freeElementsPoints = freeElements->points();
+    QPointF obstaclePoint = freeElementsPoints[updateIndex];
+
+    if (obstaclePoint !=QPointF()){
+        freeElements->replace(updateIndex, QPointF());
+        obstacleElements->replace(updateIndex, obstaclePoint);
+
+        gridNodes.Nodes[updateIndex].obstacle = true;
+
+    }
+
+}
+
+void GridView::replaceObstaclebyFree(int updateIndex)
+{
+    // Current node is obstacle
+    QList<QPointF> obstacleElementsPoints = obstacleElements->points();
+    QPointF obstaclePoint = obstacleElementsPoints[updateIndex];
+
+    if (obstaclePoint != QPointF()){
+        obstacleElements    ->replace(updateIndex, QPointF());
+        freeElements        ->replace(updateIndex, obstaclePoint);
+        gridNodes.Nodes[updateIndex].obstacle = false;
+
+    }else{
+        std::cerr <<"No points \n";
+    }
+}
+
+void GridView::replaceNextbyVisited(int updateIndex)
+{
+    // Current node is next
+    QList<QPointF> nextElementsPoints = nextElements->points();
+    QPointF visitedPoint = nextElementsPoints[updateIndex];
+
+    if (visitedPoint !=QPointF())
+    {
+        nextElements->replace(updateIndex, QPointF());
+        visitedElements->replace(updateIndex, visitedPoint);
+    }
+}
