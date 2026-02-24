@@ -282,4 +282,48 @@ void PathAlgorithm::performDijkstraAlgorithm(QPromise<int>& promise)
             }
         }
     }
+     int pathLength = 0;
+    if (nodeEnd->parent != nullptr){ // Path found
+        // Path reconstruction and pathLength calculation
+        std::vector<int> pathIndices;
+        Node* currentPathNode = nodeEnd;
+        while (currentPathNode != nullptr) {
+            pathIndices.insert(pathIndices.begin(), coordToIndex(currentPathNode->xCoord, currentPathNode->yCoord, widthGrid));
+            currentPathNode = currentPathNode->parent;
+        }
+        pathLength = pathIndices.size() > 0 ? pathIndices.size() - 1 : 0;
+
+        emit pathfindingSearchCompleted(nodesVisitedCount, pathLength);
+        qDebug() << "Dijkstra: Pathfinding search completed. Emitting pathfindingSearchCompleted()";
+
+        // Visualization of the path
+        emit updatedLineGridView(QPointF(nodeEnd->xCoord, nodeEnd->yCoord), true, true);
+
+        for (size_t i = pathIndices.size() - 1; i > 0; --i) { // Iterate from goal back to start (excluding start)
+            promise.suspendIfRequested();
+            if (promise.isCanceled()) {
+                qDebug() << "Dijkstra: Algorithm cancelled during visualization.";
+                break;
+            }
+            int pathNodeIndex = pathIndices[i];
+            emit updatedScatterGridView(PATH, pathNodeIndex);
+            emit updatedLineGridView(QPointF(gridNodes.Nodes[pathNodeIndex].xCoord, gridNodes.Nodes[pathNodeIndex].yCoord), true, false);
+            std::this_thread::sleep_for(std::chrono::milliseconds(speedVisualization));
+        }
+        emit updatedLineGridView(QPointF(gridNodes.Nodes[gridNodes.startIndex].xCoord, gridNodes.Nodes[gridNodes.startIndex].yCoord), true, false);
+
+    }else{ // No path found
+        endReached = false;
+        emit pathfindingSearchCompleted(nodesVisitedCount, 0);
+        qDebug() << "Dijkstra: Pathfinding search not found. Emitting pathfindingSearchCompleted()";
+    }
+
+    // Reset visited flags for next run
+    for(Node& node: gridNodes.Nodes) {
+        node.visited = false;
+        node.nextUp = false; // Not strictly used in Dijkstra, but good to reset
+    }
+
+    emit algorithmCompleted();
+    qDebug() << "Dijkstra: Algorithm completed (visualization done). Emitting algorithmCompleted()";
 }
