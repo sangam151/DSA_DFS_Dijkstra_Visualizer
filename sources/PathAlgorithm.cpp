@@ -85,8 +85,9 @@ void PathAlgorithm::FillNeighboursNode(Node& node)
 
 void PathAlgorithm::checkGridNode(grid g, int h, int w)
 {
-    // Debug output (unchanged)
-    // (omitted for brevity, can be kept as is)
+    Q_UNUSED(g);
+    Q_UNUSED(h);
+    Q_UNUSED(w);
 }
 
 void PathAlgorithm::runAlgorithm(ALGOS algorithm)
@@ -98,7 +99,7 @@ void PathAlgorithm::runAlgorithm(ALGOS algorithm)
         futureOutput = QtConcurrent::run(&pool, &PathAlgorithm::performDijkstraAlgorithm, this);
         break;
     case BACKTRACK:
-        // This will be handled in the MazeGenerator file
+        futureOutput = QtConcurrent::run(&pool, &PathAlgorithm::performRecursiveBackTrackerAlgorithm, this);
         break;
     default:
         break;
