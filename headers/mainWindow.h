@@ -1,4 +1,3 @@
-// mainWindow.h
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -7,25 +6,15 @@
 #include <QElapsedTimer>
 #include <QTableWidget>
 #include <QTableWidgetItem>
-#include <QPushButton> // Includes QPushButton for the new button
 #include "GridView.h"
 #include "PathAlgorithm.h"
-#include "qlabel.h"
-#include <QFile>
-#include <QTextStream>
-#include "PlayerMazeWindow.h" // Includes the new player maze window
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
-
-namespace Ui
-{
-class MainWindow;
-}
-
+namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-
-//structure to hold comparison data for each algorithm run
+// Structure to hold comparison data for each algorithm run
 struct AlgorithmComparisonData {
     QString algorithmName;
     qint64  timeElapsedMs;
@@ -37,51 +26,29 @@ struct AlgorithmComparisonData {
     qreal   branchingFactor;
 };
 
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    // Constructor
     MainWindow(QWidget *parent = nullptr);
-    // Destructor
-    virtual ~MainWindow();
+    ~MainWindow();
 
-    // Setting up objects
     void setupInteractionComboBox();
     void setupAlgorithmsComboBox();
     void setupGridView(QString gridViewName);
     void setupComparisonTable();
 
-    // Getters
     GridView& getGridView();
 
-
-public: Q_SIGNALS:
-    //void launchedBFS();
-
 public slots:
-    // Run the simulation and pause it
     void on_runButton_clicked();
-
-    // Reset the ChartView
     void on_resetButton_clicked();
-
-    // Generate button
-    void on_mazeButton_clicked(); // Renamed from on_mazeButton_released() for clarity
-
-    // Handles the different interaction changes
+    void on_mazeButton_clicked();
     void on_interactionBox_currentIndexChanged(int index);
-
-    // Handles the different algorithm changes
     void on_algorithmsBox_currentIndexChanged(int index);
-
-    // Action to do when the path algorithm is finished
     void onAlgorithmCompleted();
-
-    // Action to do when the pathfinding search completes (before visualization)
-    void onPathfindingSearchCompleted(int nodesVisited, int pathLength); // This slot will now only populate the list
+    void onPathfindingSearchCompleted(int nodesVisited, int pathLength);
 
 private slots:
     void on_dialWidth_valueChanged(int value);
@@ -91,19 +58,11 @@ private slots:
     void on_dialWidth_sliderReleased();
     void on_dialHeight_sliderReleased();
     void on_speedSpinBox_valueChanged(int arg1);
-    void updateElapsedTime(); // slot for timer updates
+    void updateElapsedTime();
     void generateMazeWithAlgorithm(int algorithmEnum);
-    void on_clearComparisonButton_clicked(); // Slot for clearing all comparison data
-    void on_deleteSelectedRowButton_clicked(); // Slot for deleting a selected row
-
-    // Slot to receive and process extracted maze features (and predict difficulty)
+    void on_clearComparisonButton_clicked();
+    void on_deleteSelectedRowButton_clicked();
     void extractAndExportMazeFeatures(int nodesVisited, int pathLength);
-
-    // Slot for the "Play Yourself" button
-    void on_playYourselfButton_clicked();
-    // Slot to handle game finished signal from PlayerMazeWindow
-    void onPlayerMazeGameFinished(bool won);
-
 
 private:
     Ui::MainWindow* ui;
@@ -116,15 +75,8 @@ private:
     qint64 pausedTimeOffset;
     QList<AlgorithmComparisonData> comparisonDataList;
 
-    // Function to export features to CSV
-    void exportFeaturesToCSV(const AlgorithmComparisonData& dataToExport);
-
-    // Function to update the QTableWidget with all current data
     void updateComparisonTable();
-
-    QPushButton* playYourselfButton; // Declare the new button
-    PlayerMazeWindow* playerMazeWindow; // Pointer to the player maze window
-
-    bool mazeCurrentlyGenerated; //Flag to track if a maze is generated
+    bool mazeCurrentlyGenerated;
 };
+
 #endif // MAINWINDOW_H
