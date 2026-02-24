@@ -192,3 +192,22 @@ void PathAlgorithm::stopAlgorithm()
     qDebug() << "PathAlgorithm: futureOutput.cancel() called.";
 }
 
+void PathAlgorithm::performDijkstraAlgorithm(QPromise<int>& promise)
+{
+    qDebug() << "Dijkstra: Algorithm started in worker thread:" << QThread::currentThreadId();
+    promise.suspendIfRequested();
+    if (promise.isCanceled()) {
+        emit pathfindingSearchCompleted(0, 0);
+        return;
+    }
+
+    // Reset node properties for a new run
+    for(Node& node: gridNodes.Nodes)
+    {
+        node.neighbours.clear();
+        FillNeighboursNode(node); // Ensure neighbors are filled
+        node.localGoal      = INFINITY;
+        node.parent         = nullptr;
+        node.visited        = false; // Reset visited flag
+    }
+}
