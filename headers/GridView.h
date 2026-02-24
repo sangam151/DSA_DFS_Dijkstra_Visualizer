@@ -18,11 +18,11 @@ QT_USE_NAMESPACE
 typedef enum {EMPTY, MAZE, NOARRANG} ARRANGEMENTS;
 
 // Possible Algorithm chosen in the Algorithm Box
-typedef enum {BFS, DFS, DIJKSTRA, ASTAR,BACKTRACK,PRIMS,KRUSKAL,WILSONS, NOALGO} ALGOS;
+// Only Dijkstra for pathfinding and Recursive Backtracking for maze generation are kept.
+typedef enum {DIJKSTRA, BACKTRACK, NOALGO} ALGOS;
 
 // Possible update in the grid view from the Path Algorithm
 typedef enum {CURRENT, FREE, VISIT, OBSTACLETOFREE, FREETOOBSTACLE, NEXT, PATH, LINE} UPDATETYPES;
-
 
 // Node structure
 struct Node
@@ -32,22 +32,19 @@ struct Node
     bool visited = false;
     bool obstacle = false;
 
-    // used in BFS and DFS (true: in nextNodes)
+    // used in BFS and DFS (true: in nextNodes) – kept for compatibility but not used
     bool nextUp = false;
 
-    // used in ASTAR
+    // used in ASTAR – kept for compatibility but not used
     float globalGoal;
     float localGoal;
     Node* parent;
     std::vector<Node*> neighbours;
-
 };
 
 // Grid structure
-struct grid //: public QObject
+struct grid
 {
-    //Q_OBJECT
-
 public:
     std::vector<Node> Nodes;
     int startIndex;
@@ -55,7 +52,7 @@ public:
     int currentIndex;
 };
 
-// NEW: Struct to hold maze features for difficulty estimation
+// Struct to hold maze features for difficulty estimation
 struct MazeFeatures {
     int gridWidth;
     int gridHeight;
@@ -65,7 +62,6 @@ struct MazeFeatures {
     int numDeadEnds;
     float branchingFactor;
 
-    // Default constructor
     MazeFeatures() : gridWidth(0), gridHeight(0), wallDensity(0.0f),
         shortestPathLength(0), nodesVisited(0),
         numDeadEnds(0), branchingFactor(0.0f) {}
@@ -141,10 +137,10 @@ public:
 
     //Function to get the path length from the pathLine series
     int getPathLength() const;
-public:
+
     // Add this new function declaration:
     void setupNodes();
-    // NEW: Feature extraction methods
+    // Feature extraction methods
     float calculateWallDensity() const;
     int countDeadEnds() const;
     float calculateBranchingFactor() const;
